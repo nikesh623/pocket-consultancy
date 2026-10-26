@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <h1>Application Details</h1>
+
+    <div class="card p-4 mb-4">
+        <p><strong>Reference:</strong> {{ application.reference_code }}</p>
+        <p><strong>Course:</strong> {{ application.course }}</p>
+        <p><strong>Status:</strong> {{ application.get_status_display }}</p>
+        
+        {% if request.user.role == "counselor" or request.user.role == "administrator" %}
+            <p class="mb-0 mt-3">
+                <a href="{% url 'core:application_status_update_page' application.pk %}" class="btn btn-sm btn-primary">
+                    Update Application Status
+                </a>
+            </p>
+        {% endif %}
+
+        <p class="mt-3"><strong>Created:</strong> {{ application.created_at|date:"Y-m-d H:i" }}</p>
+        <p><strong>Statement:</strong> {{ application.student_statement|default:"Not provided" }}</p>
+    </div>
+
+    <h2>Status History</h2>
+
+    <div class="mb-4">
+        {% for item in history %}
+            <article class="border-bottom py-2">
+                <p class="mb-1">
+                    <strong>{{ item.get_new_status_display }}</strong>
+                    — <span class="text-secondary small">{{ item.changed_at|date:"Y-m-d H:i" }}</span>
+                </p>
+                {% if item.note %}
+                    <p class="mb-1">{{ item.note }}</p>
+                {% endif %}
+                {% if item.changed_by %}
+                    <p class="text-secondary small mb-0">Updated by: {{ item.changed_by.username }}</p>
+                {% endif %}
+            </article>
+        {% empty %}
+            <p class="text-secondary">No status history available.</p>
+        {% endfor %}
+    </div>
+
+    <p>
+        <a href="{% url 'core:my_student_applications' %}">
+            &larr; Back to My Applications
+        </a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>My Applications</h1>
+
+<p>
+    <a href="{% url 'core:create_student_application' %}">
+        Apply to a Course
+    </a>
+</p>
+
+{% for application in applications %}
+    <article>
+        <h3>{{ application.course }}</h3>
+        <p>Reference: {{ application.reference_code }}</p>
+        <p>Status: {{ application.get_status_display }}</p>
+        <p>Created: {{ application.created_at }}</p>
+
+        <a href="{% url 'core:student_application_detail' application.pk %}">
+            View Details
+        </a>
+    </article>
+{% empty %}
+    <p>You have not created any demo applications yet.</p>
+{% endfor %}
+{% endblock %}

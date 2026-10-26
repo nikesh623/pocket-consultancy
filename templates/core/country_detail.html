@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ country.name }}</h1>
+    <p><strong>Currency:</strong> {{ country.currency|default:"Not specified" }}</p>
+    <p><strong>Official language:</strong> {{ country.official_language|default:"Not specified" }}</p>
+
+    <h2>About this destination</h2>
+    <p>{{ country.general_information|default:"No general information added yet." }}</p>
+
+    <h2>Universities</h2>
+    {% for university in universities %}
+        <section>
+            <h3>
+                <a href="{% url 'core:university_detail' university.pk %}">
+                    {{ university.name }}
+                </a>
+            </h3>
+            <p>City: {{ university.city|default:"Not specified" }}</p>
+        </section>
+    {% empty %}
+        <p>No universities are currently listed for this country.</p>
+    {% endfor %}
+
+    <p><a href="{% url 'core:country_list' %}">All Countries</a></p>
+</div>
+{% endblock %}

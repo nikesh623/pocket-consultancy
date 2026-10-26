@@ -1,0 +1,37 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ course.name }}</h1>
+
+    <p>
+        <strong>University:</strong>
+        <a href="{% url 'core:university_detail' course.university.pk %}">
+            {{ course.university.name }}
+        </a>
+    </p>
+
+    <p><strong>Country:</strong> {{ course.university.country.name }}</p>
+    <p><strong>Study level:</strong> {{ course.get_study_level_display }}</p>
+    <p><strong>Duration:</strong> {{ course.duration_years }} years</p>
+    <p><strong>Indicative annual tuition:</strong> {{ course.annual_tuition_fee }} {{ course.currency }}</p>
+
+    <h2>Entry Requirements</h2>
+    <p>{{ course.entry_requirements|default:"Requirements have not been added yet." }}</p>
+
+    {% if course.minimum_academic_score != None %}
+        <p>
+            <strong>Indicative minimum academic score:</strong>
+            {{ course.minimum_academic_score }}%
+        </p>
+    {% endif %}
+
+    <p>
+        Fees and requirements are demonstration data. Verify current details
+        with the institution before making an application decision.
+    </p>
+
+    <p><a href="{% url 'core:course_list' %}">All Courses</a></p>
+</div>
+{% endblock %}

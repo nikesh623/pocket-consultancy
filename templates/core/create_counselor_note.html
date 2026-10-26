@@ -1,0 +1,21 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Create Private Counselor Note</h2>
+
+<p>
+    This note is visible to its authoring counselor and authorized
+    administrators, not to the student.
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Note</button>
+</form>
+
+<a href="{% url 'core:counselor_notes' %}">
+    Back to Counselor Notes
+</a>
+{% endblock %}

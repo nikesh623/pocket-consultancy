@@ -1,0 +1,50 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>My Student Profile</h1>
+    <p>Manage your academic background and study preferences.</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <section>
+        <h2>Personal Information</h2>
+        <p><strong>Name:</strong> {{ request.user.get_full_name|default:request.user.username }}</p>
+        <p><strong>Email:</strong> {{ request.user.email }}</p>
+        <p><strong>Phone:</strong> {{ profile.phone|default:"Not provided" }}</p>
+        <p><strong>Address:</strong> {{ profile.address|default:"Not provided" }}</p>
+        <p><strong>Date of birth:</strong> {{ profile.date_of_birth|default:"Not provided" }}</p>
+    </section>
+
+    <section>
+        <h2>Academic Information</h2>
+        <p><strong>Highest qualification:</strong> {{ profile.highest_qualification|default:"Not provided" }}</p>
+        <p><strong>Academic score:</strong>
+            {% if profile.academic_score != None %}
+                {{ profile.academic_score }}%
+            {% else %}
+                Not provided
+            {% endif %}
+        </p>
+    </section>
+
+    <section>
+        <h2>Study Preferences</h2>
+        <p><strong>Study level:</strong> {{ profile.get_preferred_study_level_display|default:"Not selected" }}</p>
+        <p><strong>Preferred country:</strong> {{ profile.preferred_country|default:"Not selected" }}</p>
+        <p><strong>Annual budget:</strong> {{ profile.annual_budget|default:"Not provided" }}</p>
+    </section>
+
+    <p>
+        <a href="{% url 'core:edit_student_profile' %}">
+            Edit My Profile
+        </a>
+    </p>
+    <p><a href="{% url 'core:dashboard' %}">Back to Dashboard</a></p>
+</div>
+{% endblock %}

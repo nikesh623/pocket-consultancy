@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Document Review Queue</h1>
+
+    <p>Review documents submitted by students.</p>
+
+    {% if documents %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Document</th>
+                    <th>Type</th>
+                    <th>Uploaded</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for document in documents %}
+                    <tr>
+                        <td>{{ document.student.username }}</td>
+                        <td>{{ document.title }}</td>
+                        <td>{{ document.get_document_type_display }}</td>
+                        <td>{{ document.uploaded_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <a href="{% url 'core:review_student_document' document.id %}">
+                                Review
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no documents awaiting review.</p>
+    {% endif %}
+</div>
+{% endblock %}

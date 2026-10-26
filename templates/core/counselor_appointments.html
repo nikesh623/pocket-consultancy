@@ -1,0 +1,66 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Counseling Appointments</h1>
+    <p>Review student requests and manage appointment status.</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <p class="message">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+
+{% if appointments %}
+    <div class="course-grid">
+        {% for appointment in appointments %}
+            <article class="course-card">
+                <h2>{{ appointment.student.username }}</h2>
+
+                <p>
+                    <strong>Date and time:</strong>
+                    {{ appointment.appointment_datetime|date:"M d, Y, g:i A" }}
+                </p>
+
+                <p>
+                    <strong>Reason:</strong>
+                    {{ appointment.reason }}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ appointment.get_status_display }}
+                </p>
+
+                {% if appointment.status == "pending" %}
+                    <form method="post"
+                          action="{% url 'core:update_appointment_status' appointment.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" name="status" value="confirmed">
+                            Confirm Appointment
+                        </button>
+                        <button type="submit" name="status" value="cancelled">
+                            Cancel Appointment
+                        </button>
+                    </form>
+                {% elif appointment.status == "confirmed" %}
+                    <form method="post"
+                          action="{% url 'core:update_appointment_status' appointment.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" name="status" value="completed">
+                            Mark Completed
+                        </button>
+                        <button type="submit" name="status" value="cancelled">
+                            Cancel Appointment
+                        </button>
+                    </form>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>You have no appointments assigned to you yet.</p>
+{% endif %}
+{% endblock %}

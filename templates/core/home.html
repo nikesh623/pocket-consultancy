@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+
+{% block title %}Home | Pocket Consultancy{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <span class="badge text-bg-primary mb-3">
+                Education Consultancy Management
+            </span>
+            <h1 class="display-4 fw-bold">
+                Your Study Abroad Journey, Organized in One Place.
+            </h1>
+            <p class="lead text-secondary mt-3">
+                Explore study options, compare preliminary university
+                matches, organize counseling, and track your progress
+                through one centralized platform.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                {% if user.is_authenticated %}
+                    <a class="btn btn-primary btn-lg"
+                       href="{% url 'core:dashboard' %}">
+                        Open Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn-primary btn-lg"
+                       href="{% url 'accounts:register' %}">
+                        Get Started
+                    </a>
+                    <a class="btn btn-outline-primary btn-lg"
+                       href="{% url 'accounts:login' %}">
+                        Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="surface p-4 p-lg-5">
+                <h2 class="h4 fw-bold">Platform Features</h2>
+                <div class="mt-4">
+                    <h3 class="h6">University Matching</h3>
+                    <p class="text-secondary">
+                        Compare student preferences with sample course
+                        eligibility criteria.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="h6">Counseling Management</h3>
+                    <p class="text-secondary">
+                        Organize appointment requests and counselor
+                        availability.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="h6">Document Management</h3>
+                    <p class="text-secondary">
+                        Track sample document review and resubmission.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="h6">Application Tracking</h3>
+                    <p class="text-secondary mb-0">
+                        View simulated application stages and history.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="alert alert-warning">
+    <strong>Academic prototype:</strong>
+    This project uses sample/reference data for educational
+    demonstration. It does not provide official admission, visa
+    processing, document authentication, or guaranteed recommendations.
+    Verify current requirements with official sources.
+</div>
+{% endblock %}

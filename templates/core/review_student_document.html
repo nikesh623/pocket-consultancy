@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Review Student Document</h1>
+
+    <p><strong>Student:</strong> {{ document.student.username }}</p>
+    <p><strong>Title:</strong> {{ document.title }}</p>
+    <p><strong>Type:</strong> {{ document.get_document_type_display }}</p>
+    <p><strong>Uploaded:</strong> {{ document.uploaded_at|date:"Y-m-d H:i" }}</p>
+    <p><strong>Current status:</strong> {{ document.get_status_display }}</p>
+
+    {% if document.status == "pending" %}
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="status">Review decision</label>
+                <select name="status" id="status" required>
+                    <option value="">Choose a decision</option>
+                    <option value="approved">Approved for Demo</option>
+                    <option value="rejected">Rejected / Resubmission Required</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="review_feedback">Feedback</label>
+                <textarea
+                    name="review_feedback"
+                    id="review_feedback"
+                    maxlength="1000"
+                    rows="5"
+                    placeholder="Enter review feedback"
+                ></textarea>
+            </div>
+
+            <button type="submit">Save Review</button>
+        </form>
+    {% else %}
+        <p>This document has already been reviewed.</p>
+        <p><strong>Feedback:</strong> {{ document.review_feedback|default:"No feedback provided." }}</p>
+    {% endif %}
+
+    <p>
+        <a href="{% url 'core:document_review_queue' %}">
+            Back to Review Queue
+        </a>
+    </p>
+</div>
+{% endblock %}

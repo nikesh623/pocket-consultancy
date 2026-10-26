@@ -1,0 +1,37 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ university.name }}</h1>
+    <p><strong>Country:</strong> {{ university.country.name }}</p>
+    <p><strong>City:</strong> {{ university.city|default:"Not specified" }}</p>
+    <p>{{ university.description|default:"No description available yet." }}</p>
+
+    {% if university.website %}
+        <p>
+            <a href="{{ university.website }}" target="_blank"
+               rel="noopener noreferrer">Visit official website</a>
+        </p>
+    {% endif %}
+
+    <h2>Available Courses</h2>
+
+    {% for course in courses %}
+        <section>
+            <h3>
+                <a href="{% url 'core:course_detail' course.pk %}">
+                    {{ course.name }}
+                </a>
+            </h3>
+            <p>Level: {{ course.get_study_level_display }}</p>
+            <p>Duration: {{ course.duration_years }} years</p>
+            <p>Indicative annual tuition: {{ course.annual_tuition_fee }} {{ course.currency }}</p>
+        </section>
+    {% empty %}
+        <p>No courses are currently listed for this university.</p>
+    {% endfor %}
+
+    <p><a href="{% url 'core:university_list' %}">All Universities</a></p>
+</div>
+{% endblock %}

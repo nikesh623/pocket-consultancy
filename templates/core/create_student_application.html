@@ -1,0 +1,18 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Create Demo Application</h1>
+
+<p>This creates a record in Pocket Consultancy. It does not submit an application to a real university.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Application</button>
+</form>
+
+<a href="{% url 'core:my_student_applications' %}">
+    My Applications
+</a>
+{% endblock %}

@@ -1,0 +1,57 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Courses</h1>
+    <p>Search courses and compare their indicative tuition fees.</p>
+
+    <form method="get">
+        <input type="search" name="q"
+               placeholder="Search course or university"
+               value="{{ query }}">
+
+        <select name="level">
+            <option value="">All Study Levels</option>
+            {% for value, label in study_levels %}
+                <option value="{{ value }}"
+                    {% if selected_level == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <select name="country">
+            <option value="">All Countries</option>
+            {% for country in countries %}
+                <option value="{{ country.pk }}"
+                    {% if selected_country == country.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ country.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Apply Filters</button>
+        <a href="{% url 'core:course_list' %}">Clear</a>
+    </form>
+
+    {% for course in courses %}
+        <section>
+            <h2>
+                <a href="{% url 'core:course_detail' course.pk %}">
+                    {{ course.name }}
+                </a>
+            </h2>
+            <p>University: {{ course.university.name }}</p>
+            <p>Country: {{ course.university.country.name }}</p>
+            <p>Level: {{ course.get_study_level_display }}</p>
+            <p>Duration: {{ course.duration_years }} years</p>
+            <p>Indicative annual tuition: {{ course.annual_tuition_fee }} {{ course.currency }}</p>
+        </section>
+    {% empty %}
+        <p>No matching courses found.</p>
+    {% endfor %}
+
+    <p><a href="{% url 'core:dashboard' %}">Back to Dashboard</a></p>
+</div>
+{% endblock %}

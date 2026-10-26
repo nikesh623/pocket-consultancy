@@ -1,0 +1,39 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Update Application Status</h2>
+
+<p>
+    <strong>Application:</strong>
+    {{ application.reference_code }}
+</p>
+
+<p>
+    <strong>Student:</strong>
+    {{ application.student.username }}
+</p>
+
+<p>
+    <strong>Current status:</strong>
+    {{ application.get_status_display }}
+</p>
+
+<form
+    method="post"
+    action="{% url 'core:update_student_application_status' application.id %}"
+>
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Save Status</button>
+</form>
+
+<p>
+    <a href="{% url 'core:student_application_detail' application.id %}">
+        Back to Application Details
+    </a>
+</p>
+
+{% endblock %}

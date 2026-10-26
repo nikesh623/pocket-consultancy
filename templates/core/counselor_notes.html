@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Counselor Notes</h2>
+
+<p>
+    These are private guidance records. Students cannot view this page.
+</p>
+
+<a href="{% url 'core:create_counselor_note' %}">
+    Create New Note
+</a>
+
+{% if notes %}
+    {% for item in notes %}
+        <article>
+            <h3>{{ item.title }}</h3>
+            <p><strong>Student:</strong> {{ item.student.username }}</p>
+            {% if item.application %}
+                <p>
+                    <strong>Application:</strong>
+                    {{ item.application.reference_code }}
+                </p>
+            {% endif %}
+            <p>{{ item.note|linebreaksbr }}</p>
+            <small>
+                Created {{ item.created_at|date:"M d, Y H:i" }}
+            </small>
+            <hr>
+        </article>
+    {% endfor %}
+{% else %}
+    <p>No counselor notes have been recorded yet.</p>
+{% endif %}
+{% endblock %}

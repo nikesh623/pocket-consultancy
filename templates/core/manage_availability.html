@@ -1,0 +1,80 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Manage My Availability</h1>
+    <p>Create future time slots when students can request counseling.</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <p class="message">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+
+<h2>Add Availability</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+            </label>
+
+            {{ field }}
+
+            {% for error in field.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <button type="submit">Add Availability</button>
+</form>
+
+<h2>My Availability Slots</h2>
+
+{% if slots %}
+    <div class="course-grid">
+        {% for slot in slots %}
+            <article class="course-card">
+                <p>
+                    <strong>Start:</strong>
+                    {{ slot.start_datetime|date:"M d, Y, g:i A" }}
+                </p>
+
+                <p>
+                    <strong>End:</strong>
+                    {{ slot.end_datetime|date:"M d, Y, g:i A" }}
+                </p>
+
+                <p>
+                    <strong>Available:</strong>
+                    {{ slot.is_available|yesno:"Yes,No" }}
+                </p>
+
+                {% if slot.start_datetime > now %}
+                    <form method="post"
+                          action="{% url 'core:toggle_availability' slot.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">
+                            {% if slot.is_available %}
+                                Mark Unavailable
+                            {% else %}
+                                Mark Available
+                            {% endif %}
+                        </button>
+                    </form>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>You have not created any availability slots.</p>
+{% endif %}
+{% endblock %}

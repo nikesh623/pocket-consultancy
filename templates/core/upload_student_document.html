@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Upload a Document</h1>
+
+    <p>
+        Upload a PDF, JPG, JPEG, or PNG file.
+        Maximum size: 5 MB.
+    </p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+
+        <button type="submit">Upload Document</button>
+    </form>
+
+    <p>
+        <a href="{% url 'core:my_documents' %}">
+            View My Documents
+        </a>
+    </p>
+</div>
+{% endblock %}

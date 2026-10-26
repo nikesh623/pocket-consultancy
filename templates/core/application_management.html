@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Application Management</h2>
+
+<p>
+    Review student applications and access their status-management pages.
+</p>
+
+{% if applications %}
+    <table>
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+                <tr>
+                    <td>{{ application.reference_code }}</td>
+                    <td>{{ application.student.username }}</td>
+                    <td>{{ application.course }}</td>
+                    <td>{{ application.get_status_display }}</td>
+                    <td>
+                        <a href="{% url 'core:student_application_detail' application.id %}">
+                            View Details
+                        </a>
+
+                        |
+
+                        <a href="{% url 'core:application_status_update_page' application.id %}">
+                            Update Status
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No student applications have been submitted yet.</p>
+{% endif %}
+
+<p>
+    <a href="{% url 'core:counselor_dashboard' %}">
+        Back to Dashboard
+    </a>
+</p>
+{% endblock %}

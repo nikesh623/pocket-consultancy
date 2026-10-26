@@ -1,0 +1,102 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Course Matching Results</h1>
+
+    <p>
+        These suggestions compare your saved profile with the
+        course information currently in the catalog.
+    </p>
+
+    <p>
+        <a href="{% url 'core:student_profile' %}">
+            Review My Profile
+        </a>
+        |
+        <a href="{% url 'core:edit_student_profile' %}">
+            Update Preferences
+        </a>
+    </p>
+
+    {% if not results %}
+        <p>No active courses are available for matching yet.</p>
+        <p>Ask the administrator to add courses to the catalog.</p>
+    {% endif %}
+
+    {% for result in results %}
+        <section>
+            <hr>
+
+            <h2>
+                <a href="{% url 'core:course_detail' result.course.pk %}">
+                    {{ result.course.name }}
+                </a>
+            </h2>
+
+            <p>
+                <strong>University:</strong>
+                {{ result.course.university.name }}
+            </p>
+
+            <p>
+                <strong>Country:</strong>
+                {{ result.course.university.country.name }}
+            </p>
+
+            <p>
+                <strong>Study level:</strong>
+                {{ result.course.get_study_level_display }}
+            </p>
+
+            <p>
+                <strong>Annual tuition:</strong>
+                {{ result.course.annual_tuition_fee }}
+                {{ result.course.currency }}
+            </p>
+
+            <p><strong>Assessment:</strong> {{ result.label }}</p>
+
+            {% if result.reasons %}
+                <h3>Matching criteria</h3>
+                <ul>
+                    {% for reason in result.reasons %}
+                        <li>{{ reason }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if result.concerns %}
+                <h3>Criteria to review</h3>
+                <ul>
+                    {% for concern in result.concerns %}
+                        <li>{{ concern }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if result.unknowns %}
+                <h3>Information still needed</h3>
+                <ul>
+                    {% for unknown in result.unknowns %}
+                        <li>{{ unknown }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+    {% endfor %}
+
+    <hr>
+
+    <p>
+        <strong>Disclaimer:</strong>
+        These are rule-based guidance results, not admission decisions.
+        Actual eligibility depends on the institution's current
+        requirements, supporting documents, and other applicable criteria.
+        Tuition does not include every possible study or living expense.
+    </p>
+
+    <p><a href="{% url 'core:dashboard' %}">Back to Dashboard</a></p>
+</div>
+{% endblock %}

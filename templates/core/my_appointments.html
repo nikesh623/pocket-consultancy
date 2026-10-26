@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Appointments</h1>
+    <p>View your consultation requests and their current status.</p>
+</div>
+
+{% if appointments %}
+    <div class="course-grid">
+        {% for appointment in appointments %}
+            <article class="course-card">
+                <h2>{{ appointment.counselor.username }}</h2>
+
+                <p>
+                    <strong>Date and time:</strong>
+                    {{ appointment.appointment_datetime|date:"M d, Y, g:i A" }}
+                </p>
+
+                <p>
+                    <strong>Reason:</strong>
+                    {{ appointment.reason }}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ appointment.get_status_display }}
+                </p>
+                {% if appointment.status == "pending" or appointment.status == "confirmed" %}
+                    <form method="post"
+                        action="{% url 'core:cancel_appointment' appointment.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">Cancel Appointment</button>
+                    </form>
+                {% endif %}
+
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>You have not requested any appointments yet.</p>
+    <a href="{% url 'core:book_appointment' %}">
+        Book an appointment
+    </a>
+{% endif %}
+{% endblock %}

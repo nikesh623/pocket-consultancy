@@ -1,0 +1,62 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Course Shortlist</h1>
+    <p>Review the courses you have saved for further consideration.</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <p class="message">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+
+{% if shortlist_items %}
+    <div class="course-grid">
+        {% for item in shortlist_items %}
+            <article class="course-card">
+                <h2>{{ item.course.name }}</h2>
+
+                <p>
+                    <strong>University:</strong>
+                    {{ item.course.university.name }}
+                </p>
+
+                <p>
+                    <strong>Country:</strong>
+                    {{ item.course.university.country.name }}
+                </p>
+
+                <p>
+                    <strong>Study level:</strong>
+                    {{ item.course.get_study_level_display }}
+                </p>
+
+                <p>
+                    <strong>Duration:</strong>
+                    {{ item.course.duration_years }} years
+                </p>
+
+                <p>
+                    <strong>Annual tuition:</strong>
+                    {{ item.course.currency }}
+                    {{ item.course.annual_tuition_fee }}
+                </p>
+
+                <form
+                    method="post"
+                    action="{% url 'core:remove_from_shortlist' item.pk %}"
+                >
+                    {% csrf_token %}
+                    <button type="submit">Remove from shortlist</button>
+                </form>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>You have not saved any courses yet.</p>
+    <a href="{% url 'core:course_list' %}">Browse courses</a>
+{% endif %}
+{% endblock %}

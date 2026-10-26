@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}{{ dashboard_title }} | Pocket Consultancy{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <p class="text-secondary small mb-1">POCKET CONSULTANCY / WORKSPACE</p>
+    <h1 class="fw-bold">{{ dashboard_title }}</h1>
+    <p class="text-secondary">{{ dashboard_description }}</p>
+</div>
+
+<!-- Dashboard Statistics Grid -->
+<section class="dashboard-stats mb-4">
+    {% if user.role == "student" %}
+        <article class="stat-card">
+            <h3>My Applications</h3>
+            <p>{{ total_applications|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Shortlisted Courses</h3>
+            <p>{{ shortlisted_courses|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Unread Notifications</h3>
+            <p>{{ unread_notifications|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Upcoming Appointments</h3>
+            <p>{{ upcoming_appointments|default:0 }}</p>
+        </article>
+
+    {% elif user.role == "counselor" %}
+        <article class="stat-card">
+            <h3>Total Applications</h3>
+            <p>{{ total_applications|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Applications Needing Review</h3>
+            <p>{{ applications_needing_review|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Upcoming Appointments</h3>
+            <p>{{ upcoming_appointments|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>My Counselor Notes</h3>
+            <p>{{ total_counselor_notes|default:0 }}</p>
+        </article>
+
+    {% elif user.role == "documentation_officer" %}
+        <article class="stat-card">
+            <h3>Total Documents</h3>
+            <p>{{ total_documents|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Pending Review</h3>
+            <p>{{ pending_documents|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Approved</h3>
+            <p>{{ approved_documents|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Rejected</h3>
+            <p>{{ rejected_documents|default:0 }}</p>
+        </article>
+
+    {% elif user.role == "administrator" or user.is_superuser %}
+        <article class="stat-card">
+            <h3>Total Students</h3>
+            <p>{{ total_students|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Total Counselors</h3>
+            <p>{{ total_counselors|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Total Applications</h3>
+            <p>{{ total_applications|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Applications Needing Review</h3>
+            <p>{{ applications_needing_review|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Total Documents</h3>
+            <p>{{ total_documents|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Pending Documents</h3>
+            <p>{{ pending_documents|default:0 }}</p>
+        </article>
+
+        <article class="stat-card">
+            <h3>Upcoming Appointments</h3>
+            <p>{{ upcoming_appointments|default:0 }}</p>
+        </article>
+    {% endif %}
+</section>
+
+<!-- Role-Specific Quick Actions -->
+<section class="dashboard-actions mb-4">
+    <h2 class="h5 mb-3">Quick Actions</h2>
+
+    <div class="actions-grid">
+        {% if user.role == "student" %}
+            <a class="action-card" href="{% url 'core:course_list' %}">
+                Browse Courses
+            </a>
+            <a class="action-card" href="{% url 'core:my_shortlist' %}">
+                My Shortlisted Courses
+            </a>
+            <a class="action-card" href="{% url 'core:my_student_applications' %}">
+                My Applications
+            </a>
+            <a class="action-card" href="{% url 'core:my_notifications' %}">
+                My Notifications
+            </a>
+
+        {% elif user.role == "counselor" %}
+            <a class="action-card" href="{% url 'core:application_management' %}">
+                Manage Applications
+            </a>
+            <a class="action-card" href="{% url 'core:counselor_notes' %}">
+                Counselor Notes
+            </a>
+
+        {% elif user.role == "documentation_officer" %}
+            <a class="action-card" href="{% url 'core:document_review_queue' %}">
+                Review Student Documents
+            </a>
+
+        {% elif user.role == "administrator" or user.is_superuser %}
+            <a class="action-card" href="{% url 'admin:index' %}">
+                Django Administration
+            </a>
+            <a class="action-card" href="{% url 'core:application_management' %}">
+                Manage Applications
+            </a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Recent Applications Section -->
+{% if recent_applications %}
+<section class="recent-activity mb-4">
+    <h2 class="h5 mb-3">Recent Applications</h2>
+
+    <div class="activity-list d-flex flex-column gap-3">
+        {% for application in recent_applications %}
+            <article class="activity-card surface p-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ application.reference_code }}</strong>
+                    <p class="mb-1 text-secondary">{{ application.course }}</p>
+
+                    {% if user.role != "student" %}
+                        <p class="mb-1 small">Student: {{ application.student }}</p>
+                    {% endif %}
+
+                    <small class="text-muted">
+                        {{ application.get_status_display }}
+                        &middot;
+                        {{ application.created_at|date:"M d, Y" }}
+                    </small>
+                </div>
+
+                <a href="{% url 'core:student_application_detail' application.pk %}" class="btn btn-sm btn-outline-primary">
+                    View
+                </a>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Notifications Section (Students Only) -->
+{% if user.role == "student" %}
+<section class="recent-activity mb-4">
+    <h2 class="h5 mb-3">Recent Notifications</h2>
+
+    {% if recent_notifications %}
+        <div class="activity-list d-flex flex-column gap-2">
+            {% for notification in recent_notifications %}
+                <article class="activity-card surface p-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ notification.title }}</strong>
+                        <p class="mb-1 text-secondary">{{ notification.message }}</p>
+                        <small class="text-muted">
+                            {{ notification.created_at|date:"M d, Y H:i" }}
+                        </small>
+                    </div>
+
+                    {% if not notification.is_read %}
+                        <span class="badge text-bg-warning">Unread</span>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-secondary">You have no notifications yet.</p>
+    {% endif %}
+</section>
+{% endif %}
+
+<!-- Detailed Workspace Navigation & Info Grid -->
+<div class="row g-3">
+    <div class="col-md-6 col-xl-4">
+        <div class="surface p-4 h-100">
+            <h2 class="h5">Your Workspace</h2>
+            <p class="text-secondary mb-2">
+                Your account is authenticated. Access all role-specific tools below.
+            </p>
+            
+            {% if request.user.role == "student" %}
+                <div class="d-flex flex-column gap-1 mb-0">
+                    <a href="{% url 'core:student_profile' %}">
+                        View My Student Profile
+                    </a>
+                    <a href="{% url 'core:course_matches' %}">
+                        Find Matching Courses
+                    </a>
+                    <a href="{% url 'core:my_shortlist' %}">
+                        My Course Shortlist
+                    </a>
+                    <a href="{% url 'core:book_appointment' %}">
+                        Book a Counseling Appointment
+                    </a>
+                    <a href="{% url 'core:my_appointments' %}">
+                        My Appointments
+                    </a>
+                    <a href="{% url 'core:upload_student_document' %}">
+                        Upload a Document
+                    </a>
+                    <a href="{% url 'core:my_documents' %}">
+                        My Documents
+                    </a>
+                    <a href="{% url 'core:my_student_applications' %}">
+                        My Applications
+                    </a>
+                    <a href="{% url 'core:my_notifications' %}">
+                        My Notifications
+                    </a>
+                </div>
+            {% elif request.user.role == "counselor" or request.user.role == "administrator" or request.user.is_superuser %}
+                <div class="d-flex flex-column gap-3 mb-0">
+                    <section>
+                        <h2 class="h6 fw-bold mb-1">Application Management</h2>
+                        <p class="small text-secondary mb-1">
+                            Review applications, inspect details, and update statuses.
+                        </p>
+                        <a href="{% url 'core:application_management' %}">
+                            Manage Applications
+                        </a>
+                    </section>
+
+                    <section>
+                        <h2 class="h6 fw-bold mb-1">Counselor Appointments</h2>
+                        <a href="{% url 'core:counselor_appointments' %}">
+                            View Appointments
+                        </a>
+                    </section>
+
+                    <section>
+                        <h2 class="h6 fw-bold mb-1">Counselor Availability</h2>
+                        <a href="{% url 'core:manage_availability' %}">
+                            Manage Availability
+                        </a>
+                    </section>
+
+                    <section>
+                        <h2 class="h6 fw-bold mb-1">Counselor Notes</h2>
+                        <p class="small text-secondary mb-1">Record and review private student guidance notes.</p>
+                        <div class="d-flex flex-column gap-1">
+                            <a href="{% url 'core:counselor_notes' %}">
+                                View Counselor Notes
+                            </a>
+                            <a href="{% url 'core:create_counselor_note' %}">
+                                Create Counselor Note
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            {% elif request.user.role == "documentation_officer" %}
+                <div class="d-flex flex-column gap-1 mb-0">
+                    <a href="{% url 'core:document_review_queue' %}">
+                        Review Student Documents
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="surface p-4 h-100">
+            <h2 class="h5">Account Role</h2>
+            <p class="mb-0">
+                <span class="badge text-bg-primary">
+                    {{ user.get_role_display }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="surface p-4 h-100">
+            <h2 class="h5">Academic Prototype</h2>
+            <p class="text-secondary mb-0">
+                All consultancy workflows and university information
+                are for demonstration purposes.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

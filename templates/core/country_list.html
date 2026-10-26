@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Study Destinations</h1>
+    <p>Explore countries for your future education.</p>
+
+    <form method="get">
+        <input type="search" name="q"
+               placeholder="Search countries or languages"
+               value="{{ query }}">
+        <button type="submit">Search</button>
+        <a href="{% url 'core:country_list' %}">Clear</a>
+    </form>
+
+    {% for country in countries %}
+        <section>
+            <h2>
+                <a href="{% url 'core:country_detail' country.pk %}">
+                    {{ country.name }}
+                </a>
+            </h2>
+            <p>Currency: {{ country.currency|default:"Not specified" }}</p>
+            <p>Official language: {{ country.official_language|default:"Not specified" }}</p>
+            <a href="{% url 'core:country_detail' country.pk %}">
+                Explore universities
+            </a>
+        </section>
+    {% empty %}
+        <p>No countries found. Add sample countries through Django admin.</p>
+    {% endfor %}
+
+    <p><a href="{% url 'core:dashboard' %}">Back to Dashboard</a></p>
+</div>
+{% endblock %}

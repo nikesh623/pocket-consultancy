@@ -1,0 +1,50 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Universities</h1>
+    <p>Explore universities in available study destinations.</p>
+
+    <form method="get">
+        <input type="search" name="q"
+               placeholder="Search name, city, or country"
+               value="{{ query }}">
+
+        <select name="country">
+            <option value="">All Countries</option>
+            {% for country in countries %}
+                <option value="{{ country.pk }}"
+                    {% if selected_country == country.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ country.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Apply Filters</button>
+        <a href="{% url 'core:university_list' %}">Clear</a>
+    </form>
+
+    {% for university in universities %}
+        <section>
+            <h2>
+                <a href="{% url 'core:university_detail' university.pk %}">
+                    {{ university.name }}
+                </a>
+            </h2>
+            <p>Country: {{ university.country.name }}</p>
+            <p>City: {{ university.city|default:"Not specified" }}</p>
+            {% if university.website %}
+                <p>
+                    <a href="{{ university.website }}" target="_blank"
+                       rel="noopener noreferrer">University website</a>
+                </p>
+            {% endif %}
+        </section>
+    {% empty %}
+        <p>No matching universities found.</p>
+    {% endfor %}
+
+    <p><a href="{% url 'core:dashboard' %}">Back to Dashboard</a></p>
+</div>
+{% endblock %}
