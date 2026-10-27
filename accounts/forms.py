@@ -63,6 +63,7 @@ class StudentRegistrationForm(UserCreationForm):
         return user
 
 
+
 class StyledAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(attrs={
@@ -71,10 +72,23 @@ class StyledAuthenticationForm(AuthenticationForm):
             "autofocus": True,
         }),
     )
-
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
             "class": "form-control",
             "placeholder": "Password",
         }),
     )
+    
+    def confirm_login_allowed(self, user):
+        if (
+            not user.is_superuser
+            and user.approval_status
+            != user.ApprovalStatus.APPROVED
+        ):
+            raise forms.ValidationError(
+                "Your account has not been approved. "
+                "Please contact the administrator if you need assistance.",
+                code="account_not_approved",
+            )
+
+        super().confirm_login_allowed(user)

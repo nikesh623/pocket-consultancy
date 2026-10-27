@@ -14,18 +14,29 @@ def register(request):
         form = StudentRegistrationForm(request.POST)
 
         if form.is_valid():
-            user = form.save()
-            login(
-                request,
-                user,
-                backend="django.contrib.auth.backends.ModelBackend",
-            )
+            user = form.save(commit=False)
+
+            # Public registrations must always be students.
+            user.role = user.Role.STUDENT
+
+            # Require administrator approval before login.
+            user.approval_status = user.ApprovalStatus.PENDING
+            user.is_active = False
+
+            user.save()
+
             messages.success(
                 request,
-                "Your student account has been created successfully.",
+                "Registration submitted successfully. "
+                "Your account is pending administrator approval. "
+                "You will be able to log in after approval.",
             )
-            return redirect("core:dashboard")
+            return redirect("accounts:login")
     else:
         form = StudentRegistrationForm()
 
-    return render(request, "accounts/register.html", {"form": form})
+    return render(
+        request,
+        "accounts/register.html",
+        {"form": form},
+    )
