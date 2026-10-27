@@ -1,0 +1,7 @@
+
+Django==5.2.18
+python-dotenv==1.2.4
+gunicorn
+whitenoise
+psycopg[binary]
+Pillow
